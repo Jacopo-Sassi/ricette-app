@@ -3,12 +3,26 @@ const router = express.Router();
 const Recipe = require("../models/Recipe");
 
 router.get("/", async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
   try {
-    const recipes = await Recipe.find().sort({ createdAt: -1 });
-    res.json(recipes);
+    const recipes = await Recipe.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Recipe.countDocuments();
+
+    res.json({
+      recipes,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalRecipes: total,
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Errore server" });
+    res.status(500).json({ error: "Errore nel recupero paginato" });
   }
 });
 
@@ -22,6 +36,35 @@ router.get("/:id", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Errore server" });
+  }
+});
+
+router.get("/search", async (req, res) => {
+  const query = req.query.query;
+
+  try {
+    const recipes = await Recipe.find({
+      $or: [
+        { title: { $regex: query, $options: "i" } },
+        { ingredients: { $regex: query, $options: "i" } },
+      ],
+    });
+
+    res.json(recipes);
+  } catch (err) {
+    res.status(500).json({ error: "Errore nella ricerca" });
+  }
+});
+
+router.get("/category/:category", async (req, res) => {
+  try {
+    const recipes = await Recipe.find({
+      category: req.params.category,
+    });
+
+    res.json(recipes);
+  } catch (err) {
+    res.status(500).json({ error: "Errore nel filtraggio per categoria" });
   }
 });
 
