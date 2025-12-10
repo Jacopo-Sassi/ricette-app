@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Recipe = require("../models/Recipe");
 
+
 router.get("/", async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
@@ -26,6 +27,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+
 router.get("/:id", async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id);
@@ -38,6 +40,7 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ message: "Errore server" });
   }
 });
+
 
 router.get("/search", async (req, res) => {
   const query = req.query.query;
@@ -56,6 +59,7 @@ router.get("/search", async (req, res) => {
   }
 });
 
+
 router.get("/category/:category", async (req, res) => {
   try {
     const recipes = await Recipe.find({
@@ -68,9 +72,11 @@ router.get("/category/:category", async (req, res) => {
   }
 });
 
+
 router.post("/", async (req, res) => {
   try {
-    const { title, description, ingredients, steps, category } = req.body;
+    const { title, description, ingredients, steps, category, imageUrl } =
+      req.body;
 
     const newRecipe = new Recipe({
       title,
@@ -78,6 +84,7 @@ router.post("/", async (req, res) => {
       ingredients,
       steps,
       category,
+      imageUrl: imageUrl?.trim() !== "" ? imageUrl : null,
     });
 
     const savedRecipe = await newRecipe.save();
@@ -88,13 +95,22 @@ router.post("/", async (req, res) => {
   }
 });
 
+
 router.put("/:id", async (req, res) => {
   try {
-    const { title, description, ingredients, steps, category } = req.body;
+    const { title, description, ingredients, steps, category, imageUrl } =
+      req.body;
 
     const updatedRecipe = await Recipe.findByIdAndUpdate(
       req.params.id,
-      { title, description, ingredients, steps, category },
+      {
+        title,
+        description,
+        ingredients,
+        steps,
+        category,
+        imageUrl: imageUrl?.trim() !== "" ? imageUrl : null,
+      },
       { new: true }
     );
 
@@ -108,6 +124,7 @@ router.put("/:id", async (req, res) => {
     res.status(500).json({ message: "Errore server" });
   }
 });
+
 
 router.delete("/:id", async (req, res) => {
   try {
