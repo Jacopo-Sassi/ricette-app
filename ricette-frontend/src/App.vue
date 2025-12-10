@@ -79,20 +79,20 @@
           </div>
           <div class="menu-items">
             <a href="#" class="menu-item">
-              <span class="menu-icon">👤</span>
+
               <span>Profilo</span>
             </a>
             <a href="#" class="menu-item">
-              <span class="menu-icon">⚙️</span>
+
               <span>Impostazioni</span>
             </a>
             <a href="#" class="menu-item">
-              <span class="menu-icon">📊</span>
+
               <span>Statistiche</span>
             </a>
             <div class="menu-divider"></div>
             <a href="#" class="menu-item logout">
-              <span class="menu-icon">🚪</span>
+              
               <span>Esci</span>
             </a>
           </div>
